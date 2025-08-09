@@ -6,7 +6,7 @@ import { useDebouncedValue, useDidUpdate, useViewportSize } from '@mantine/hooks
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/dist/ScrollTrigger'
 import  ImageNext from "next/image";
-import { type FC, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import ScrollSmoother from "gsap/dist/ScrollSmoother";
 
 gsap.registerPlugin(ScrollTrigger, ScrollSmoother, useGSAP)
@@ -19,8 +19,10 @@ export default function Home() {
 		const viewportSize = useViewportSize()
 		const [debouncedViewportSize] = useDebouncedValue(viewportSize, 500)
 		const [loadedImages, setLoadedImages] = useState<HTMLImageElement[]>()
-
+    const progressBarRef = useRef<HTMLDivElement>(null)
     const isMobile = viewportSize.width < 768
+
+    const currentDirection = useRef(-1)
 
 			useEffect(() => {
         if (!canvas.current) return
@@ -59,9 +61,12 @@ export default function Home() {
 				const context = canvas.current.getContext('2d', { alpha: true })
 				if (!context) return
 
-        ScrollSmoother.create({
+        if (!isMobile) {
+          ScrollSmoother.create({
           smooth: 1.5 // how long (in seconds) it takes to "catch up" to the native scroll position
-        });
+          });
+        }
+
 				// ScrollTrigger for updating image sequence frames
 				const scroll = ScrollTrigger.create({
 					id: 'image-sequence',
@@ -70,11 +75,55 @@ export default function Home() {
 					//end: 'bottom top', // End when the bottom of the header reaches the top of the viewport
           end: '+=3000',
 					pin: '#content-wrapper', // Pin the content container so it doesn't scroll off the screen
-          onUpdate: ({ progress }) => {
+          onUpdate: ({ progress, direction }) => {
             const nextFrame = Math.floor(progress * loadedImages.length)
             const nextImage = loadedImages[nextFrame]
             if (!nextImage) return
             updateCanvasImage(context, canvas.current!, nextImage)
+
+          // Lógica para actualizar la barra de progreso
+          if (progressBarRef.current) {
+            gsap.to(progressBarRef.current, {
+              width: `${progress * 100}%`,
+              ease: "none", // Mantener la animación de la barra lineal
+              duration: 0.1
+            });
+          }
+          
+          /**Logica para cambiar icono de direction */
+          if (currentDirection.current !== direction) {
+            currentDirection.current = direction
+            if (direction === 1) {
+              gsap.to(".down_direction", {
+                opacity: 1,
+                scale:1.4,
+                ease: 'elastic.inOut', // Mantener la animación de la barra lineal
+                duration: 0.1
+              })
+              gsap.to(".up_direction", {
+                opacity: 0.5,
+                scale:1,
+                ease: 'elastic.inOut', // Mantener la animación de la barra lineal
+                duration: 0.1
+              })
+            }else{
+              gsap.to(".up_direction", {
+                opacity: 1,
+                scale:1.4,
+                ease: 'elastic.inOut', // Mantener la animación de la barra lineal
+                duration: 0.1
+              })
+              gsap.to(".down_direction", {
+                opacity: 0.5,
+                scale:1,
+                ease: 'elastic.inOut', // Mantener la animación de la barra lineal
+                duration: 0.1
+              })
+            
+            }
+
+
+          }
           },
         })
         
@@ -113,6 +162,21 @@ export default function Home() {
           {  opacity: 1},
           '<'
         ).to(
+          '.page_one',
+//           { translateX:"-160px", opacity:1},
+          { x:"215px", opacity: 0.6},
+          '<'
+        ).to(
+          '.page_two',
+//           { translateX:"-160px", opacity:1},
+          { x:"-175px", opacity: 1},
+          '<'
+        ).to(
+          '.page_three',
+//           { translateX:"-160px", opacity:1},
+          { x:"-35px"},
+          '<'
+        ).to(
           '.animated_space .second',
           { x:"100vw", opacity: 0},
           '+=100%'
@@ -132,6 +196,21 @@ export default function Home() {
           {  opacity: 1},
           '<'
         ).to(
+          '.page_two',
+//           { translateX:"-160px", opacity:1},
+          { x:"30px", opacity: 0.6},
+          '<'
+        ).to(
+          '.page_one',
+//           { translateX:"-160px", opacity:1},
+          { x:"180px"},
+          '<'
+        ).to(
+          '.page_three',
+//           { translateX:"-160px", opacity:1},
+          { x:"-215px", opacity:1},
+          '<'
+        ).to(
           '.animated_space .third',
           { x:"-50vw", opacity: 0},
           '+=75%'
@@ -144,6 +223,10 @@ export default function Home() {
           { y:"100vh", opacity: 0},
           { y: !isMobile ?"65vh" : "75vh", opacity: 1},
           '-=25%'
+        ).to(
+          '.out',
+          { y:"50vh", opacity: 0},
+           '<'
         )
 			},
 			{
@@ -215,7 +298,24 @@ export default function Home() {
               <h2 className="text_over_seq third">Prosperity<br/>Protected</h2>
               <h2 className="text_over_seq last"><span>We Are</span><br/>Swanson Reserve {isMobile? <> <br/><span>Capital</span></>:null}</h2>
             </div>
+            <div className="progress_container out">
+             
+              <div style={{display:'flex',gap:10,  justifyContent:'space-between', alignItems:'center'}}>
+                <ImageNext className="up_direction" src={"/assets/chevron.png"}  width={16} height={9} alt="logo menu"/>
+                <ImageNext className="down_direction" src={"/assets/chevron.png"}  width={16} height={9} alt="logo menu"/>
+              </div>
+ 
+              <div className="progress_bar_container">
+                <div ref={progressBarRef} className="progress_bar"></div>
+              </div>
 
+
+            </div>
+              <div className="pages out">
+                <span className="page page_one">01</span>
+                <span className="page page_two">02</span>
+                <span className="page page_three">03</span>
+              </div>
 						<canvas ref={canvas} className="canvas_image_sequence" />
 
 					</section>

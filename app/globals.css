@@ -58,7 +58,7 @@ a {
 }
 .text_over_seq{
     font-weight: 500;
-    font-size: 110px;
+    font-size: 150px;
     font-style: normal;
     text-shadow: #00000040 0 4 20 0 ;
     opacity: 0;
@@ -68,6 +68,12 @@ a {
     span{
       font-weight: 600;
     }
+  @media only screen and (min-width: 1441) and (max-width:1700) {
+    font-size: 105px;
+  }
+  @media only screen and (min-width: 1025) and (max-width:1440) {
+    font-size: 65px;
+  }
         @media only screen and (min-width: 980) and (max-width:1024) {
     font-size: 80px;
   }
@@ -105,8 +111,9 @@ a {
   font-size: 20px;
   position: absolute;
   left: 9%;
-  bottom: 32%;
-  @media only screen and (min-width: 1441) and (max-width: 1600px) {
+  bottom: 42%;
+
+  @media only screen and (min-width: 1441) and (max-width: 1700px) {
     bottom: 40%;
     left: 10%;
   }
@@ -266,3 +273,60 @@ a {
   position: sticky;
   top: 100vh;
 } */
+.progress_container {
+    align-items: center;
+    display: flex;
+    position: fixed;
+    bottom: 40px;
+    left: 5%;
+    width: 300px;
+    
+    justify-content: space-around;
+    @media only screen and (max-width: 767px) {
+    display: none;
+   
+  }
+}
+/* Estilos para la barra de progreso */
+.progress_bar_container {
+
+  width: 114px;
+  height: 2px;
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 1px;
+  z-index: 2;
+  margin-left: 0px;
+}
+
+.progress_bar {
+  width: 0%;
+  height: 100%;
+  background-color: #ffffff;
+  border-radius: 4px;
+  transition: width 0.1s ease-out; /* Una transición suave para la barra */
+}
+
+.up_direction{
+  rotate: 180deg;
+}
+.pages{
+  position: absolute;
+  bottom: 35px;
+  left: 190px;
+  @media only screen and (max-width: 767px) {
+    display: none;
+  }
+}
+.page{
+  color: #fff;
+  font-weight: 500;
+  font-size: 15px;
+  margin-inline: 10px;
+  opacity: 0.6;
+  display:inline-block;
+}
+
+.page_one{
+  margin-right: 150px;
+  opacity: 1;
+}
