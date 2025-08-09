@@ -5,11 +5,11 @@ import { useGSAP } from '@gsap/react'
 import { useDebouncedValue, useDidUpdate, useViewportSize } from '@mantine/hooks'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/dist/ScrollTrigger'
-//import Image from "next/image";
+import  ImageNext from "next/image";
 import { type FC, useEffect, useRef, useState } from 'react'
+import ScrollSmoother from "gsap/dist/ScrollSmoother";
 
-
-gsap.registerPlugin(ScrollTrigger, useGSAP)
+gsap.registerPlugin(ScrollTrigger, ScrollSmoother, useGSAP)
 
 
 export default function Home() {
@@ -59,22 +59,26 @@ export default function Home() {
 				const context = canvas.current.getContext('2d', { alpha: true })
 				if (!context) return
 
+        ScrollSmoother.create({
+          smooth: 1.5 // how long (in seconds) it takes to "catch up" to the native scroll position
+        });
 				// ScrollTrigger for updating image sequence frames
-				ScrollTrigger.create({
+				const scroll = ScrollTrigger.create({
 					id: 'image-sequence',
 					trigger: header.current,
 					start: 0,
 					//end: 'bottom top', // End when the bottom of the header reaches the top of the viewport
           end: '+=3000',
 					pin: '#content-wrapper', // Pin the content container so it doesn't scroll off the screen
-        onUpdate: ({ progress }) => {
-          const nextFrame = Math.floor(progress * loadedImages.length)
-          const nextImage = loadedImages[nextFrame]
-          if (!nextImage) return
-          updateCanvasImage(context, canvas.current!, nextImage)
-        },
-      })
-
+          onUpdate: ({ progress }) => {
+            const nextFrame = Math.floor(progress * loadedImages.length)
+            const nextImage = loadedImages[nextFrame]
+            if (!nextImage) return
+            updateCanvasImage(context, canvas.current!, nextImage)
+          },
+        })
+        
+    
         // Timeline de animaciones vinculado al ScrollTrigger de la secuencia
         gsap.timeline({
           defaults: {
@@ -167,26 +171,39 @@ export default function Home() {
 		}, [debouncedViewportSize])
 
 		return (
-			<div ref={header} className={styles.page}>
-				<main className={styles.main}>
-          <nav>
+			<div ref={header} id="smooth-wrapper" className={styles.page}>
+				<main id="smooth-content" className={styles.main}>
 
-            <a className="nav-link" href="#info-section">about us</a>
-            <a className="nav-link" href="#story-section">our story</a>
-            <a className="nav-link" href="#team-section">team</a>
-            <a className="nav-link" href="#governance-section" data-offset="100">governance</a>
-            <a className="schedule" href="https://schedule.swansonreservecapital.com/" target="_blank">
-                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M6 0V4.5" stroke="black"/>
-                  <path d="M6 6.75L6 12" stroke="black"/>
-                  <path d="M0 6L4.5 6" stroke="black"/>
-                  <path d="M6.75 6L12 6" stroke="black"/>
-                  </svg>
-                schedule
-            </a>
-        </nav>
 					<section id="content-wrapper">
-          
+            <header className="header">
+              <div className="logo_container">
+                <ImageNext src={"/assets/logo.png"} width={65} height={55} alt="logo swanson"/>
+                <p className="logo_text">Swanson</p>
+              </div>
+              <div className="group_navbar">
+                <nav className="navbar">
+                  <a className="nav-link" href="#info-section">about us</a>
+                  <a className="nav-link" href="#story-section">our story</a>
+                  <a className="nav-link" href="#team-section">team</a>
+                  <a className="nav-link" href="#governance-section" data-offset="100">governance</a>
+                  <a className="schedule" href="https://schedule.swansonreservecapital.com/" target="_blank">
+                      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M6 0V4.5" stroke="black"/>
+                        <path d="M6 6.75L6 12" stroke="black"/>
+                        <path d="M0 6L4.5 6" stroke="black"/>
+                        <path d="M6.75 6L12 6" stroke="black"/>
+                        </svg>
+                      schedule
+                  </a>
+
+                </nav>
+                    <button className="hamburguer_btn">
+                      <img src={"/assets/hamburguer.png"}  width={74} height={11.5} alt="logo menu"/>
+                    </button>
+              </div>
+
+            </header>
+
             <div className="animated_space">
 
               <p className="layer_over_seq one">Market Capitalization Company</p>
@@ -202,7 +219,7 @@ export default function Home() {
 						<canvas ref={canvas} className="canvas_image_sequence" />
 
 					</section>
-					<section>
+					<section className="second_section">
 						<br></br>
 						<br></br>
 						<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Obcaecati consectetur doloremque numquam distinctio a illum corporis dolores aspernatur laboriosam, vitae cupiditate similique porro mollitia. Enim eius sunt quam fugiat necessitatibus. Aliquam, dicta? Nobis quidem saepe sed mollitia doloribus eligendi molestias inventore excepturi alias cupiditate dolor aspernatur ipsum culpa quasi repellat veniam, fugit odio. Laudantium, impedit nobis facilis nesciunt voluptatem enim error perferendis magni accusamus culpa aperiam, aut deserunt laboriosam! Dolore cupiditate mollitia, blanditiis iste dolorem nulla quae, necessitatibus quasi molestiae nesciunt voluptate ratione? Deserunt veniam necessitatibus officiis, accusamus enim numquam possimus eveniet nihil soluta similique placeat provident, temporibus magni asperiores.</p>
@@ -279,6 +296,5 @@ const updateCanvasImage = (
 	const offsetX = canvas.width / 2 - image.width / 2
 	const offsetY = canvas.height / 2 - image.height / 2
 	renderingContext.clearRect(0, 0, canvas.width, canvas.height)
-  console.log(image, offsetX, offsetY, image.width, image.height)
 	renderingContext.drawImage(image, offsetX, offsetY, image.width, image.height)
 }

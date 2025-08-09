@@ -1,9 +1,18 @@
 import type { Metadata } from "next";
-import { Montserrat } from "next/font/google";
+import { Montserrat, Philosopher } from "next/font/google";
 import "./globals.css";
 
-const geist = Montserrat({
+// Montserrat será nuestra fuente principal
+const montserrat = Montserrat({
   subsets: ["latin"],
+  variable: "--font-montserrat", // Exportamos la variable CSS
+});
+
+// Philosopher será para títulos y elementos destacados
+const philosopher = Philosopher({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  variable: "--font-philosopher", // Exportamos la variable CSS
 });
 
 
@@ -18,8 +27,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" >
-      <body  className={geist.className} >
+    <html lang="en" className={`${montserrat.variable} ${philosopher.variable}`} >
+      <body  className={montserrat.className} >
         {children}
       </body>
     </html>
