@@ -5,7 +5,9 @@ import { useGSAP } from '@gsap/react'
 import { useDebouncedValue, useDidUpdate, useViewportSize } from '@mantine/hooks'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/dist/ScrollTrigger'
+//import Image from "next/image";
 import { type FC, useEffect, useRef, useState } from 'react'
+
 
 gsap.registerPlugin(ScrollTrigger, useGSAP)
 
@@ -18,6 +20,8 @@ export default function Home() {
 		const [debouncedViewportSize] = useDebouncedValue(viewportSize, 500)
 		const [loadedImages, setLoadedImages] = useState<HTMLImageElement[]>()
 
+    const isMobile = viewportSize.width < 768
+
 			useEffect(() => {
         if (!canvas.current) return
         if (viewportSize.width === 0 || viewportSize.height === 0) return // First render value is 0
@@ -25,15 +29,15 @@ export default function Home() {
 
 			const intialSetup = async () => {
 				// Image Dimensions: 1920 / 1080
-				const imageAspect = 1920 / 1080
+				const imageAspect = !isMobile ? 1920 / 1080 : 430/932
 				const imageWidth = viewportSize.width
 				const imageHeight = viewportSize.width / imageAspect
 				canvas.current!.width = viewportSize.width
 				canvas.current!.height = viewportSize.height
 
 				const imageSrcs: string[] = Array.from(
-					{ length: 255 },
-					(_, i) => `/assets/new_desktop_sequence/new_desktop_sequence/swanson__00${i + 1 < 10 ? `00${i + 1}` : i + 1 < 100 ? `0${i + 1}`: i + 1}.jpg`,
+					{ length: !isMobile ? 255 : 238 },
+					(_, i) => `/assets/${!isMobile ? "new_desktop_sequence/new_desktop_sequence/swanson__00":"new_mobile_sequence/new_mobile_sequence/swanson_V__00" }${i < 10 ? `00${i}` : i < 100 ? `0${i}`: i}.jpg`,
 				)
 
 				const images = await loadImagesAndDrawFirstFrame({
@@ -47,7 +51,7 @@ export default function Home() {
 			}
 
 			intialSetup()
-		}, [viewportSize, loadedImages])
+		}, [viewportSize, loadedImages, isMobile])
 
 			useGSAP(
 			() => {
@@ -71,7 +75,7 @@ export default function Home() {
         },
       })
 
-              // Timeline de animaciones vinculado al ScrollTrigger de la secuencia
+        // Timeline de animaciones vinculado al ScrollTrigger de la secuencia
         gsap.timeline({
           defaults: {
             ease: 'none',
@@ -88,55 +92,55 @@ export default function Home() {
         .to(
           '.animated_space .first',
           { x: "100vw", opacity: 0 },
-          '+=0.05'
-        )
-        .to(
+          '0'
+        ).to(
+          '.animated_space .one',
+          { opacity: 0 },
+          '0'
+        )
+        .fromTo(
           '.animated_space .second',
-          { x:"100vw", opacity: 0},
-          '<0.1'
+          { x:"-100vw", opacity: 0},
+          { x:"0vw", opacity: 1},
+          '+=25%'
+        ).fromTo(
+          '.animated_space .two',
+          {  opacity: 0},
+          {  opacity: 1},
+          '<'
+        ).to(
+          '.animated_space .second',
+          { x:"100vw", opacity: 0},
+          '+=100%'
+        ).to(
+          '.animated_space .two',
+          {  opacity: 0},
+          '<'
         )
-        .to(
+        .fromTo(
           '.animated_space .third',
-          { x: "100vw", opacity: 0 },
-          '<0.1'
+          { x:"-100vw", opacity: 0},
+          { x:"0vw", opacity: 1},
+          '+=50%'
+        ).fromTo(
+          '.animated_space .three',
+          {  opacity: 0},
+          {  opacity: 1},
+          '<'
+        ).to(
+          '.animated_space .third',
+          { x:"-50vw", opacity: 0},
+          '+=75%'
+        ).to(
+          '.animated_space .three',
+          {  opacity: 0},
+          '<'
+        ).fromTo(
+          '.animated_space .last',
+          { y:"100vh", opacity: 0},
+          { y: !isMobile ?"65vh" : "75vh", opacity: 1},
+          '-=25%'
         )
-
-      // Animations
-      // Animate content in
-      // gsap
-      //   .timeline({
-      //     delay: 0.2,
-      //   })
-      //   .to(canvas.current, { opacity: 1, duration: 0.8 })
-      //   .to(canvas.current, { scale: 1, duration: 0.9, ease: 'power2.inOut' })
-      //   .fromTo(
-      //     '#heading',
-			// 			{ opacity: 0, scale: 0.8 },
-			// 			{ opacity: 1, scale: 1, duration: 0.7, ease: 'power2.inOut' },
-			// 			'-=0.7',
-			// 		)
-			// 	// Scroll controlled animations for headings
-			// 	gsap
-			// 		.timeline({
-			// 			defaults: {
-			// 				ease: 'none',
-			// 			},
-			// 			scrollTrigger: { trigger: header.current, start: 0, end: 'bottom top', scrub: true },
-			// 		})
-			// 		.to('#heading', {
-			// 			keyframes: [{ scale: 1.1 }, { scale: 1.15, opacity: 0 }],
-			// 			duration: 0.5,
-			// 		})
-			// 		.to(
-			// 			'h2',
-			// 			{
-			// 				keyframes: [
-			// 					{ scale: 0.9, opacity: 1, duration: 0.2 },
-			// 					{ scale: 1, opacity: 0, duration: 0.1 },
-			// 				],
-			// 			},
-			// 			'+=0.05',
-			// 		)
 			},
 			{
 				dependencies: [loadedImages],
@@ -149,13 +153,13 @@ export default function Home() {
 				if (!debouncedViewportSize.width || !debouncedViewportSize.height || !loadedImages) return
 				if (!canvas.current) return
 				if (canvas.current.width === debouncedViewportSize.width) return
-				canvas.current.width = debouncedViewportSize.width
-				canvas.current.height = debouncedViewportSize.height
-				const context = canvas.current.getContext('2d', { alpha: true })
+          canvas.current.width = debouncedViewportSize.width
+          canvas.current.height = debouncedViewportSize.height
+          const context = canvas.current.getContext('2d', { alpha: true })
 				if (!context) return
-				const progress = ScrollTrigger.getById('image-sequence')?.progress ?? 0
-				const nextFrame = Math.floor(progress * loadedImages.length)
-				const nextImage = loadedImages[nextFrame]
+          const progress = ScrollTrigger.getById('image-sequence')?.progress ?? 0
+          const nextFrame = Math.floor(progress * loadedImages.length)
+          const nextImage = loadedImages[nextFrame]
 				if (!nextImage) return
 				updateCanvasImage(context, canvas.current, nextImage)
 			}
@@ -165,15 +169,34 @@ export default function Home() {
 		return (
 			<div ref={header} className={styles.page}>
 				<main className={styles.main}>
+          <nav>
+
+            <a className="nav-link" href="#info-section">about us</a>
+            <a className="nav-link" href="#story-section">our story</a>
+            <a className="nav-link" href="#team-section">team</a>
+            <a className="nav-link" href="#governance-section" data-offset="100">governance</a>
+            <a className="schedule" href="https://schedule.swansonreservecapital.com/" target="_blank">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M6 0V4.5" stroke="black"/>
+                  <path d="M6 6.75L6 12" stroke="black"/>
+                  <path d="M0 6L4.5 6" stroke="black"/>
+                  <path d="M6.75 6L12 6" stroke="black"/>
+                  </svg>
+                schedule
+            </a>
+        </nav>
 					<section id="content-wrapper">
           
             <div className="animated_space">
-              <div className="blur_transparent" ></div>
-              
-						<h2 className="text_over_seq first">Swanson<br/>Reserve Capital</h2>
-						<h2 className="text_over_seq second">Innovation<br/>Invented</h2>
-						<h2 className="text_over_seq third">Prosperity<br/>Protected</h2>
-            <h2 className="text_over_seq last"><span>We Are</span><br/>Swanson Reserve</h2>
+
+              <p className="layer_over_seq one">Market Capitalization Company</p>
+              <p className="layer_over_seq two">Swanson Reserve Capital Is</p>
+              <p className="layer_over_seq three">Swanson Reserve Capital Is</p>
+
+              <h2 className="text_over_seq first">Swanson<br/>Reserve Capital</h2>
+              <h2 className="text_over_seq second">Innovation<br/>Invented</h2>
+              <h2 className="text_over_seq third">Prosperity<br/>Protected</h2>
+              <h2 className="text_over_seq last"><span>We Are</span><br/>Swanson Reserve {isMobile? <> <br/><span>Capital</span></>:null}</h2>
             </div>
 
 						<canvas ref={canvas} className="canvas_image_sequence" />
@@ -256,5 +279,6 @@ const updateCanvasImage = (
 	const offsetX = canvas.width / 2 - image.width / 2
 	const offsetY = canvas.height / 2 - image.height / 2
 	renderingContext.clearRect(0, 0, canvas.width, canvas.height)
+  console.log(image, offsetX, offsetY, image.width, image.height)
 	renderingContext.drawImage(image, offsetX, offsetY, image.width, image.height)
 }
