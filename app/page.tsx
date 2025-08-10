@@ -155,7 +155,7 @@ useGSAP(
           gsap.fromTo(
             secondSectionRef.current.querySelector('p'),
             { y: 50, opacity: 0 },
-            { y: 0, opacity: 1 }
+            { y: -150, opacity: 1 }
           );
         }
       },
