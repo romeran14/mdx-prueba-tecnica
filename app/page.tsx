@@ -4,7 +4,7 @@ import styles from "./page.module.css";
 import { useGSAP } from '@gsap/react'
 import { useDebouncedValue, useDidUpdate, useViewportSize } from '@mantine/hooks'
 import gsap from 'gsap'
-import ScrollTrigger from 'gsap/dist/ScrollTrigger'
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import  ImageNext from "next/image";
 import { useEffect, useRef, useState } from 'react'
 import ScrollSmoother from "gsap/dist/ScrollSmoother";
@@ -21,7 +21,7 @@ export default function Home() {
 		const [loadedImages, setLoadedImages] = useState<HTMLImageElement[]>()
     const progressBarRef = useRef<HTMLDivElement>(null)
     const isMobile = viewportSize.width < 768
-
+ const secondSectionRef = useRef<HTMLDivElement>(null) // R
     const currentDirection = useRef(-1)
 
 			useEffect(() => {
@@ -50,190 +50,162 @@ export default function Home() {
 				})
 
 				setLoadedImages(images)
+        
 			}
 
 			intialSetup()
 		}, [viewportSize, loadedImages, isMobile])
 
-			useGSAP(
-			() => {
-				if (!canvas.current || !loadedImages) return
-				const context = canvas.current.getContext('2d', { alpha: true })
-				if (!context) return
+useGSAP(
+    () => {
+        if (!canvas.current || !loadedImages) return
+        const context = canvas.current.getContext('2d', { alpha: true })
+        if (!context) return
 
-        if (!isMobile) {
-          ScrollSmoother.create({
-          smooth: 1.5 // how long (in seconds) it takes to "catch up" to the native scroll position
-          });
-        }
-
-				// ScrollTrigger for updating image sequence frames
-				const scroll = ScrollTrigger.create({
-					id: 'image-sequence',
-					trigger: header.current,
-					start: 0,
-					//end: 'bottom top', // End when the bottom of the header reaches the top of the viewport
-          end: '+=3000',
-					pin: '#content-wrapper', // Pin the content container so it doesn't scroll off the screen
-          onUpdate: ({ progress, direction }) => {
-            const nextFrame = Math.floor(progress * loadedImages.length)
-            const nextImage = loadedImages[nextFrame]
-            if (!nextImage) return
-            updateCanvasImage(context, canvas.current!, nextImage)
-
-          // Lógica para actualizar la barra de progreso
-          if (progressBarRef.current) {
-            gsap.to(progressBarRef.current, {
-              width: `${progress * 100}%`,
-              ease: "none", // Mantener la animación de la barra lineal
-              duration: 0.1
-            });
-          }
-          
-          /**Logica para cambiar icono de direction */
-          if (currentDirection.current !== direction) {
-            currentDirection.current = direction
-            if (direction === 1) {
-              gsap.to(".down_direction", {
-                opacity: 1,
-                scale:1.4,
-                ease: 'elastic.inOut', // Mantener la animación de la barra lineal
-                duration: 0.1
-              })
-              gsap.to(".up_direction", {
-                opacity: 0.5,
-                scale:1,
-                ease: 'elastic.inOut', // Mantener la animación de la barra lineal
-                duration: 0.1
-              })
-            }else{
-              gsap.to(".up_direction", {
-                opacity: 1,
-                scale:1.4,
-                ease: 'elastic.inOut', // Mantener la animación de la barra lineal
-                duration: 0.1
-              })
-              gsap.to(".down_direction", {
-                opacity: 0.5,
-                scale:1,
-                ease: 'elastic.inOut', // Mantener la animación de la barra lineal
-                duration: 0.1
-              })
-            
-            }
-
-
-          }
-          },
-        })
+        // Crea la línea de tiempo de las animaciones
+        const textTimeline = gsap.timeline({
+            defaults: { ease: 'none' }
+        });
         
-    
-        // Timeline de animaciones vinculado al ScrollTrigger de la secuencia
-        gsap.timeline({
-          defaults: {
-            ease: 'none',
-          },
-          // Usamos el mismo ScrollTrigger que la secuencia de imágenes
-          scrollTrigger: {
+        textTimeline.to('.animated_space .first', { x: "100vw", opacity: 0 }, '0')
+        .to('.animated_space .one', { opacity: 0 }, '0')
+        .fromTo('.animated_space .second', { x:"-100vw", opacity: 0}, { x:"0vw", opacity: 1}, '+=25%')
+        .fromTo('.animated_space .two', { opacity: 0}, { opacity: 1}, '<')
+        .to('.page_one', { x:"215px", opacity: 0.6}, '<')
+        .to('.page_two', { x:"-175px", opacity: 1}, '<')
+        .to('.page_three', { x:"-35px"}, '<')
+        .to('.animated_space .second', { x:"100vw", opacity: 0}, '+=100%')
+        .to('.animated_space .two', { opacity: 0}, '<')
+        .fromTo('.animated_space .third', { x:"-100vw", opacity: 0}, { x:"0vw", opacity: 1}, '+=50%')
+        .fromTo('.animated_space .three', { opacity: 0}, { opacity: 1}, '<')
+        .to('.page_two', { x:"30px", opacity: 0.6}, '<')
+        .to('.page_one', { x:"180px"}, '<')
+        .to('.page_three', { x:"-215px", opacity:1}, '<')
+        .to('.animated_space .third', { x:"-50vw", opacity: 0}, '+=75%')
+        .to('.animated_space .three', { opacity: 0}, '<')
+        .fromTo('.animated_space .last', { y:"100vh", opacity: 0}, { y: !isMobile ?"65vh" : "75vh", opacity: 1}, '-=25%')
+        .to('.out', { y:"50vh", opacity: 0}, '<')
+        console.log(textTimeline.duration())
+        // Usa la duración de la línea de tiempo para determinar el final del ScrollTrigger
+        const durationInPixels = textTimeline.duration() * 500; // Ajusta este multiplicador según sea necesario
+        
+        ScrollTrigger.create({
+            id:'image-sequence',
             trigger: header.current,
             start: 0,
-            end: '+=3000',
-            scrub: true, // Esto hace que la animación se sincronice con el scroll
-          },
-        })
-        // Animaciones para cada h2
-        .to(
-          '.animated_space .first',
-          { x: "100vw", opacity: 0 },
-          '0'
-        ).to(
-          '.animated_space .one',
-          { opacity: 0 },
-          '0'
-        )
-        .fromTo(
-          '.animated_space .second',
-          { x:"-100vw", opacity: 0},
-          { x:"0vw", opacity: 1},
-          '+=25%'
-        ).fromTo(
-          '.animated_space .two',
-          {  opacity: 0},
-          {  opacity: 1},
-          '<'
-        ).to(
-          '.page_one',
-//           { translateX:"-160px", opacity:1},
-          { x:"215px", opacity: 0.6},
-          '<'
-        ).to(
-          '.page_two',
-//           { translateX:"-160px", opacity:1},
-          { x:"-175px", opacity: 1},
-          '<'
-        ).to(
-          '.page_three',
-//           { translateX:"-160px", opacity:1},
-          { x:"-35px"},
-          '<'
-        ).to(
-          '.animated_space .second',
-          { x:"100vw", opacity: 0},
-          '+=100%'
-        ).to(
-          '.animated_space .two',
-          {  opacity: 0},
-          '<'
-        )
-        .fromTo(
-          '.animated_space .third',
-          { x:"-100vw", opacity: 0},
-          { x:"0vw", opacity: 1},
-          '+=50%'
-        ).fromTo(
-          '.animated_space .three',
-          {  opacity: 0},
-          {  opacity: 1},
-          '<'
-        ).to(
-          '.page_two',
-//           { translateX:"-160px", opacity:1},
-          { x:"30px", opacity: 0.6},
-          '<'
-        ).to(
-          '.page_one',
-//           { translateX:"-160px", opacity:1},
-          { x:"180px"},
-          '<'
-        ).to(
-          '.page_three',
-//           { translateX:"-160px", opacity:1},
-          { x:"-215px", opacity:1},
-          '<'
-        ).to(
-          '.animated_space .third',
-          { x:"-50vw", opacity: 0},
-          '+=75%'
-        ).to(
-          '.animated_space .three',
-          {  opacity: 0},
-          '<'
-        ).fromTo(
-          '.animated_space .last',
-          { y:"100vh", opacity: 0},
-          { y: !isMobile ?"65vh" : "75vh", opacity: 1},
-          '-=25%'
-        ).to(
-          '.out',
-          { y:"50vh", opacity: 0},
-           '<'
-        )
-			},
-			{
-				dependencies: [loadedImages],
-				scope: header,
-			},
-		)
+            end: `+=${durationInPixels}`,
+            pin: '#content-wrapper',
+            scrub: true, // Importante para sincronizar el scroll con la animación
+            animation: textTimeline, // Vincula la línea de tiempo a este ScrollTrigger
+            onUpdate: ({ progress, direction }) => {
+                const nextFrame = Math.floor(progress * loadedImages.length)
+                const nextImage = loadedImages[nextFrame]
+                if (!nextImage) return
+                updateCanvasImage(context, canvas.current!, nextImage)
+
+                // ... tu lógica de barra de progreso y dirección
+                if (progressBarRef.current) {
+                    gsap.to(progressBarRef.current, {
+                        width: `${progress * 100}%`,
+                        ease: "none",
+                        duration: 0.1
+                    });
+                }
+                
+                if (currentDirection.current !== direction) {
+                    currentDirection.current = direction;
+                    if (direction === 1) {
+                        gsap.to(".down_direction", { opacity: 1, scale:1.4, ease: 'elastic.inOut', duration: 0.1 });
+                        gsap.to(".up_direction", { opacity: 0.5, scale:1, ease: 'elastic.inOut', duration: 0.1 });
+                    } else {
+                        gsap.to(".up_direction", { opacity: 1, scale:1.4, ease: 'elastic.inOut', duration: 0.1 });
+                        gsap.to(".down_direction", { opacity: 0.5, scale:1, ease: 'elastic.inOut', duration: 0.1 });
+                    }
+                }
+            },
+        });
+
+    if (!secondSectionRef.current) return;
+
+  const firstScrollTrigger = ScrollTrigger.getById('image-sequence');
+
+  // Si el ScrollTrigger de la primera sección no existe, no hagas nada
+  if (!firstScrollTrigger) {
+    console.warn("ScrollTrigger with id 'image-sequence' not found.");
+    return;
+  }
+
+  gsap.timeline({
+    defaults: {
+      ease: 'power1.inOut',
+    },
+    scrollTrigger: {
+      trigger: secondSectionRef.current, // El trigger de esta animación es su propia sección
+      start: 'top bottom', // La animación comienza cuando la parte superior de la segunda sección entra en el viewport
+      end: 'top 20%',
+      scrub: true,
+      // Usamos onEnter para vincularnos directamente con el progreso de la primera animación
+      onEnter: () => {
+        // Obtenemos el progreso de la primera animación
+        const progress = firstScrollTrigger.progress;
+        // Si el progreso es 1, significa que la animación ya terminó.
+        // Ahora podemos empezar la segunda animación.
+        if (progress === 1) {
+          // Lógica para la segunda animación
+          gsap.fromTo(
+            secondSectionRef.current.querySelector('p'),
+            { y: 50, opacity: 0 },
+            { y: 0, opacity: 1 }
+          );
+        }
+      },
+    },
+  });
+    },
+    {
+        dependencies: [loadedImages, isMobile],
+        scope: header,
+    },
+);
+
+// useGSAP(() => {
+//   if (!secondSectionRef.current) return;
+
+//   const firstScrollTrigger = ScrollTrigger.getById('image-sequence');
+
+//   // Si el ScrollTrigger de la primera sección no existe, no hagas nada
+//   if (!firstScrollTrigger) {
+//     console.warn("ScrollTrigger with id 'image-sequence' not found.");
+//     return;
+//   }
+
+//   gsap.timeline({
+//     defaults: {
+//       ease: 'power1.inOut',
+//     },
+//     scrollTrigger: {
+//       trigger: secondSectionRef.current, // El trigger de esta animación es su propia sección
+//       start: 'top bottom', // La animación comienza cuando la parte superior de la segunda sección entra en el viewport
+//       end: 'top 20%',
+//       scrub: true,
+//       // Usamos onEnter para vincularnos directamente con el progreso de la primera animación
+//       onEnter: () => {
+//         // Obtenemos el progreso de la primera animación
+//         const progress = firstScrollTrigger.progress;
+//         // Si el progreso es 1, significa que la animación ya terminó.
+//         // Ahora podemos empezar la segunda animación.
+//         if (progress === 1) {
+//           // Lógica para la segunda animación
+//           gsap.fromTo(
+//             secondSectionRef.current.querySelector('p'),
+//             { y: 50, opacity: 0 },
+//             { y: 0, opacity: 1 }
+//           );
+//         }
+//       },
+//     },
+//   });
+// }, { scope: secondSectionRef, dependencies: [] });
 
 			useDidUpdate(() => {
 			const handleViewportResize = () => {
@@ -254,8 +226,11 @@ export default function Home() {
 		}, [debouncedViewportSize])
 
 		return (
-			<div ref={header} id="smooth-wrapper" className={styles.page}>
-				<main id="smooth-content" className={styles.main}>
+      <>
+    
+      	<main ref={header} >
+		
+			
 
 					<section id="content-wrapper">
             <header className="header">
@@ -319,15 +294,18 @@ export default function Home() {
 						<canvas ref={canvas} className="canvas_image_sequence" />
 
 					</section>
-					<section className="second_section">
-						<br></br>
-						<br></br>
-						<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Obcaecati consectetur doloremque numquam distinctio a illum corporis dolores aspernatur laboriosam, vitae cupiditate similique porro mollitia. Enim eius sunt quam fugiat necessitatibus. Aliquam, dicta? Nobis quidem saepe sed mollitia doloribus eligendi molestias inventore excepturi alias cupiditate dolor aspernatur ipsum culpa quasi repellat veniam, fugit odio. Laudantium, impedit nobis facilis nesciunt voluptatem enim error perferendis magni accusamus culpa aperiam, aut deserunt laboriosam! Dolore cupiditate mollitia, blanditiis iste dolorem nulla quae, necessitatibus quasi molestiae nesciunt voluptate ratione? Deserunt veniam necessitatibus officiis, accusamus enim numquam possimus eveniet nihil soluta similique placeat provident, temporibus magni asperiores.</p>
-						</section>
-				</main>
-				<footer className={styles.footer}>
-				</footer>
-			</div>
+
+			
+
+			
+      	</main>
+                <section ref={secondSectionRef} className="second_section">
+            <br></br>
+            <br></br>
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Obcaecati consectetur doloremque numquam distinctio a illum corporis dolores aspernatur laboriosam, vitae cupiditate similique porro mollitia. Enim eius sunt quam fugiat necessitatibus. Aliquam, dicta? Nobis quidem saepe sed mollitia doloribus eligendi molestias inventore excepturi alias cupiditate dolor aspernatur ipsum culpa quasi repellat veniam, fugit odio. Laudantium, impedit nobis facilis nesciunt voluptatem enim error perferendis magni accusamus culpa aperiam, aut deserunt laboriosam! Dolore cupiditate mollitia, blanditiis iste dolorem nulla quae, necessitatibus quasi molestiae nesciunt voluptate ratione? Deserunt veniam necessitatibus officiis, accusamus enim numquam possimus eveniet nihil soluta similique placeat provident, temporibus magni asperiores.</p>
+            </section>
+  
+            </>
 		);
 }
 

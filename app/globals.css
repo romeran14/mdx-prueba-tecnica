@@ -46,7 +46,7 @@ a {
 
 #content-wrapper{
   position: relative;
-  min-height: 100vh;
+  min-height: 100dvh;
 }
 
 .animated_space{
@@ -329,4 +329,30 @@ a {
 .page_one{
   margin-right: 150px;
   opacity: 1;
+}
+
+.second_section{
+  position: relative;
+  background-color: #0B0B0B;
+  min-height: 100dvh;
+}
+
+.ellipse_bg{
+  position: absolute;
+  width: 10.042vw;
+  aspect-ratio: 1;
+  background: rgba(170, 127, 44, 0.64);
+  mix-blend-mode: normal;
+  filter: blur(150px);
+
+}
+
+.primera{
+    top: 50px;
+    left: 50px;
+}
+
+.segunda{
+    bottom: 50px;
+    right: 50px;
 }
