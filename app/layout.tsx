@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Montserrat, Philosopher } from "next/font/google";
-import "./globals.css";
+import "./globals.scss";
 
 // Montserrat será nuestra fuente principal
 const montserrat = Montserrat({
