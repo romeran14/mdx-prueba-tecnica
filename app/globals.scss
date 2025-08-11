@@ -755,6 +755,9 @@ transition: color .15s ease-in-out;
   .third_section h2 {
     font-size: 48px;
   }
+   .third_section{
+    height: 60dvh !important;
+   }
 }
 
 .mobile_cards {
@@ -764,10 +767,11 @@ transition: color .15s ease-in-out;
     gap: 5px;
     justify-content: space-between;
     padding: 15px;
+    margin-top: 100px;
 }
 
 .mobile_card{
-    background-color: #7A7A7A42;
+  background-color: #7A7A7A42;
   border-radius: 10px;
   display: flex;
   justify-content: space-between;
@@ -782,7 +786,7 @@ transition: color .15s ease-in-out;
   height: 200px;
   transition: background-color .15s ease-in-out;
   color: #fff;
-  margin-bottom: 4%;
+  margin-bottom: 3.5%;
 }
 
 .mobile_number_card{
