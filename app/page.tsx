@@ -7,11 +7,12 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import ImageNext from "next/image";
 import { useEffect, useRef, useState } from 'react'
 import ScrollSmoother from "gsap/dist/ScrollSmoother";
-import SwanModel from "./components/SwanModel";
+
 import Carousel from "./components/Carousel";
+import dynamic from 'next/dynamic';
 
 gsap.registerPlugin(ScrollTrigger, ScrollSmoother, useGSAP)
-
+const SwanModel= dynamic(() => import("./components/SwanModel"), { ssr: false })
 
 export default function Home() {
 

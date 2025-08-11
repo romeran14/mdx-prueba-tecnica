@@ -61,6 +61,10 @@ a {
   width: 100%;
   height: 100%;
 }
+canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
 
 .text_over_seq {
   font-weight: 500;
@@ -450,39 +454,46 @@ a {
 
 .swan_image {
   display: block;
-  width: min-content;
+  //width: min-content;
   z-index: 1;
-}
-
-@media only screen and (min-width: 1441px) and (max-width: 1700px) {
-  .swan_image {
-    transform: scale(0.7);
-  }
-}
-
-@media only screen and (min-width: 1200px) and (max-width: 1440px) {
-  .swan_image {
-    transform: scale(0.6);
-  }
-}
-
-@media only screen and (min-width: 980px) and (max-width: 1199px) {
-  .swan_image {
-    transform: scale(0.5);
-  }
-}
-
-@media only screen and (min-width: 768px) and (max-width: 979px) {
-  .swan_image {
-    transform: scale(0.4);
-  }
+    z-index: 1;
+    width: 25vw;
+    /* height: 600px; */
+    display: block;
+    aspect-ratio: 1;
 }
 
 @media only screen and (max-width: 767px) {
   .swan_image {
-    transform: scale(0.4);
+       width: 40vw;
   }
 }
+
+
+// @media only screen and (min-width: 1441px) and (max-width: 1700px) {
+//   .swan_image {
+//     transform: scale(0.7);
+//   }
+// }
+
+// @media only screen and (min-width: 1200px) and (max-width: 1440px) {
+//   .swan_image {
+//     transform: scale(0.6);
+//   }
+// }
+
+// @media only screen and (min-width: 980px) and (max-width: 1199px) {
+//   .swan_image {
+//     transform: scale(0.5);
+//   }
+// }
+
+// @media only screen and (min-width: 768px) and (max-width: 979px) {
+//   .swan_image {
+//     transform: scale(0.4);
+//   }
+// }
+
 
 .card {
   position: absolute;
@@ -729,12 +740,6 @@ transition: color .15s ease-in-out;
 }
 
 @media only screen and (min-width: 2200px) {
-  .swiper_container {
-     height: 1000px;
-  }
-}
-
-@media only screen and (min-width: 768px) and (max-width: 1440px) {
   .drag_sticker{
     right: 15vw;
     top: 30vh;
