@@ -8,7 +8,7 @@ import ImageNext from "next/image";
 import { useEffect, useRef, useState } from 'react'
 import ScrollSmoother from "gsap/dist/ScrollSmoother";
 import SwanModel from "./components/SwanModel";
-;
+import Carousel from "./components/Carousel";
 
 gsap.registerPlugin(ScrollTrigger, ScrollSmoother, useGSAP)
 
@@ -104,7 +104,7 @@ export default function Home() {
 				.to('.page_three', { x: "-215px", opacity: 1 }, '<')
 				.to('.animated_space .third', { x: "-50vw", opacity: 0 }, '+=75%')
 				.to('.animated_space .three', { opacity: 0 }, '<')
-				.fromTo('.animated_space .last', { y: "100vh", opacity: 0 }, { y: !isMobile ? "65vh" : "75vh", opacity: 1 }, '-=25%')
+				.fromTo('.animated_space .last', { y: "100vh", opacity: 0 }, { y: !isMobile ? "60vh" : "75vh", opacity: 1 }, '-=25%')
 				.to('.out', { y: "50vh", opacity: 0 }, '<')
 	
 			const durationInPixels = textTimeline.duration() * 500;
@@ -315,10 +315,47 @@ export default function Home() {
           <div className="ellipse_bg segunda"></div>
 				</section>
         <section className="third_section">
-          <br/>
-          <br/>
-          <br/>
-          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iure officiis ullam, enim nam, nulla aliquam corrupti, voluptatibus libero voluptatem ducimus ad ipsa. Quasi eveniet ipsa iure reiciendis quisquam necessitatibus aspernatur!</p>
+          <h2 className='third_section_h2'>Our <span>Values</span></h2>
+          {isMobile ? 
+          <div className='mobile_cards' >
+            <div className="mobile_card">
+                <p className='mobile_number_card'> 
+                  1.0
+                </p>
+                <p className='mobile_text_card'>
+                   Passionate Dedication
+                </p>
+            </div>
+            <div className="mobile_card">
+                <p className='mobile_number_card'> 
+                  2.0
+                </p>
+                <p className='mobile_text_card'>
+                   Uncompromising Integrity
+                </p>
+            </div>
+            <div className="mobile_card">
+                <p className='mobile_number_card'> 
+                  3.0
+                </p>
+                <p className='mobile_text_card'>
+                   Exemplary Service
+                </p>
+            </div>
+            <div className="mobile_card">
+                <p className='mobile_number_card'> 
+                  4.0
+                </p>
+                <p className='mobile_text_card'>
+                   Relentless Innovation
+                </p>
+            </div>
+          </div>
+          :
+          <Carousel/>
+          }
+          <p className='drag_text' >drag to slide</p>
+          <div className="ellipse_bg tercera "></div>
         </section>
 
 			</div>
