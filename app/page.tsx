@@ -187,7 +187,7 @@ export default function Home() {
           { y: "-50%", x: "50%",  opacity: 0,  }, '<')
         .to(secondSectionRef.current.getElementsByClassName("swan_image")[0], 
           {opacity: 0 }, '<')
-      console.log(secondSectionTimeline.duration()) 
+
       // *** ScrollTrigger para la segunda sección, ahora con la animación vinculada ***
       ScrollTrigger.create({
         id:'secondsection',
@@ -201,13 +201,13 @@ export default function Home() {
       });
 
     /**Trigger hide loader */
-    if (ScrollTrigger.getAll().length === 2) {
+   // if (ScrollTrigger.getAll().length === 2) {
 
         gsap.to(
             loaderRef.current,
             { opacity :1 , zIndex:-1, delay:0.5, duration:0.45}
           )
-       }
+       
   
 		},
 		{
@@ -334,47 +334,10 @@ export default function Home() {
           <div className="ellipse_bg segunda"></div>
 				</section>
         <section className="third_section">
-          <h2 className='third_section_h2'>Our <span>Values</span></h2>
-          <div className="content_third_section">
-          {isMobile ? 
-            <div className='mobile_cards' >
-              <div className="mobile_card">
-                  <p className='mobile_number_card'> 
-                    1.0
-                  </p>
-                  <p className='mobile_text_card'>
-                    Passionate Dedication
-                  </p>
-              </div>
-              <div className="mobile_card">
-                  <p className='mobile_number_card'> 
-                    2.0
-                  </p>
-                  <p className='mobile_text_card'>
-                    Uncompromising Integrity
-                  </p>
-              </div>
-              <div className="mobile_card">
-                  <p className='mobile_number_card'> 
-                    3.0
-                  </p>
-                  <p className='mobile_text_card'>
-                    Exemplary Service
-                  </p>
-              </div>
-              <div className="mobile_card">
-                  <p className='mobile_number_card'> 
-                    4.0
-                  </p>
-                  <p className='mobile_text_card'>
-                    Relentless Innovation
-                  </p>
-              </div>
-            </div>
-            :
-            <Carousel/>
-            }
-          </div>
+           <Carousel
+            //@ts-expect-error ddddd
+            isMobile={isMobile}
+            />
           <p className='drag_text' >drag to slide</p>
           <div className="ellipse_bg tercera "></div>
         </section>

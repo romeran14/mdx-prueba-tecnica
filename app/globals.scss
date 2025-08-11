@@ -566,6 +566,10 @@ img.card_img {
   text-align: center;
   margin-bottom: 20px;
 }
+
+.third_section_h2 {
+  opacity: 0;
+}
 .third_section h2 span{
 color: #AA7F2C;
 }
@@ -573,7 +577,7 @@ color: #AA7F2C;
 .container {
   
 
-  
+  opacity: 0;
   text-align: center;
   color: #fff;
   font-family: sans-serif;
@@ -719,7 +723,7 @@ transition: color .15s ease-in-out;
 .drag_sticker{
   position: absolute;
   right: 21vw;
-  top: 30vh;
+  bottom: 30vh;
   transform: scale(0.6);
   z-index: 2;
 }
@@ -768,6 +772,7 @@ transition: color .15s ease-in-out;
     justify-content: space-between;
     padding: 15px;
     margin-top: 100px;
+    opacity: 0;
 }
 
 .mobile_card{
@@ -833,4 +838,36 @@ transition: color .15s ease-in-out;
 
 .pulse-element {
   animation: pulse 2s infinite ease-in-out;
+}
+
+@keyframes enter {
+  0% {
+    transform: translateY(15vh) ;
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.enter-in {
+  animation: enter 1s  ease-in;
+  opacity: 1;
+}
+
+@keyframes enter_right {
+  0% {
+    transform: translateX(20vw) ;
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.enter-right {
+  animation: enter_right 1s  ease-in;
+  opacity: 1;
 }
