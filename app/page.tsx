@@ -31,6 +31,7 @@ export default function Home() {
 	const smootherWrapper = useRef<HTMLDivElement>(null);
 	const smootherContent = useRef<HTMLDivElement>(null);
 
+ const loaderRef = useRef(null)
 
 	useEffect(() => {
 		if (!canvas.current) return
@@ -189,6 +190,7 @@ export default function Home() {
       console.log(secondSectionTimeline.duration()) 
       // *** ScrollTrigger para la segunda sección, ahora con la animación vinculada ***
       ScrollTrigger.create({
+        id:'secondsection',
         trigger: secondSectionRef.current,
         start: 'top top',
         end: `+=${secondSectionTimeline.duration() * 500}`, // Se ajusta la duración del pin a la de la animación
@@ -197,12 +199,25 @@ export default function Home() {
         scrub: true, // Esto es clave para que la animación siga el scroll
         animation: secondSectionTimeline,
       });
+
+    /**Trigger hide loader */
+    if (ScrollTrigger.getAll().length === 2) {
+
+        gsap.to(
+            loaderRef.current,
+            { opacity :1 , zIndex:-1, delay:0.5, duration:0.45}
+          )
+       }
+  
 		},
 		{
 			dependencies: [loadedImages, isMobile],
 			scope: header,
 		},
 	);
+
+
+  
 
 
 	useDidUpdate(() => {
@@ -226,6 +241,10 @@ export default function Home() {
 
 	return (
 		// Agrega los envoltorios de ScrollSmoother
+    <>
+       <div ref={loaderRef} className='loader'>
+        <ImageNext className='pulse-element' src={"/assets/logo.png"} width={155} height={145} alt="loader swanson" />
+       </div>
 		<div id="smooth-wrapper" ref={smootherWrapper}>
 			<div id="smooth-content" ref={smootherContent}>
 
@@ -362,6 +381,8 @@ export default function Home() {
 
 			</div>
 		</div>
+    </>
+ 
 	);
 }
 
