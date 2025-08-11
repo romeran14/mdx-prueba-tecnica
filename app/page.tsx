@@ -33,6 +33,10 @@ export default function Home() {
 
  const loaderRef = useRef(null)
 
+  useEffect(() => {
+    window.scrollTo(0, 0); // Scrolls to the top-left corner
+  }, []); // 
+
 	useEffect(() => {
 		if (!canvas.current) return
 		if (viewportSize.width === 0 || viewportSize.height === 0) return
