@@ -457,7 +457,7 @@ canvas {
   //width: min-content;
   z-index: 1;
     z-index: 1;
-    width: 25vw;
+    width: 35vw;
     /* height: 600px; */
     display: block;
     aspect-ratio: 1;
@@ -465,7 +465,7 @@ canvas {
 
 @media only screen and (max-width: 767px) {
   .swan_image {
-       width: 40vw;
+       width: 60vw;
   }
 }
 
